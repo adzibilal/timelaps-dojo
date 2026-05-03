@@ -196,7 +196,9 @@ export default function App() {
            - Mandatory Suffix: "Smooth timelapse transformation, fast motion with fixed camera framing, no skipped construction steps. No cuts. No transitions. No subtitles. No captions."
            
         3. SOCIAL MEDIA:
-           - Title, Description, and Tags (CSV).
+           - Title: Viral and catchy.
+           - Description: Detailed description including relevant viral hashtags (e.g. #timelapse #restoration #architecture).
+           - Tags: 10-15 relevant tags in CSV format (comma separated).
         
         Return ONLY a JSON object:
         {
