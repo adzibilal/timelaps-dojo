@@ -167,10 +167,15 @@ export default function App() {
 
     try {
       const ai = new GoogleGenAI({ apiKey });
-      const imageCount = sceneCount + 1;
+      const imageCount = parseInt(sceneCount) + 1;
       
+      const isRestoration = selectedNiche.id === 'RestorationProcess';
+      const persona = isRestoration ? "Professional Restoration & Preservation AI" : "Architectural Restoration AI";
+      const viewType = isRestoration ? "close-up or medium shot focused directly on the subject" : "wide shot from a corner of the space";
+      const laborActions = isRestoration ? "meticulous restoration work (scrubbing rust, polishing metal, precision welding, delicate cleaning)" : "construction labor (pouring concrete, grinding walls, laying tiles, cleaning)";
+
       const prompt = `
-        As an Architectural Restoration AI, generate an evolution roadmap for ${selectedNiche.name}: ${finalSubject}.
+        As a ${persona}, generate an evolution roadmap for ${selectedNiche.name}: ${finalSubject}.
         
         Project Configuration:
         - Total Scenes: ${sceneCount}
@@ -183,21 +188,21 @@ export default function App() {
         Requirements:
         1. IMAGE PROMPTS (${imageCount} items): 
            - MANDATORY: Sertakan teks "${ratio} aspect ratio" secara eksplisit di awal setiap prompt.
-           - CONTINUITY: Maintain a static camera angle from a corner of the space. Identical geometry and perspective.
+           - CONTINUITY: Maintain a static camera angle, ${viewType}. Identical geometry and perspective.
            - NO PEOPLE or workers in the images.
-           - Stage 0: Initial state based on damage context (hancur, lumut, pecah).
-           - Stage 3 & 4: Focus on aesthetics, luxury materials, and perfect lighting.
+           - Stage 0: Initial state based on damage context (rusty, dusty, broken, mossy, or decayed).
+           - Final Stages: Focus on aesthetics, premium finish, and perfect studio-quality lighting.
            
         2. VIDEO PROMPTS (${sceneCount} items): 
            - STYLE: Hyperlapse transformation.
            - CAMERA: No camera movement. Fixed framing. No zoom.
-           - CONTENT: Describe workers in PPE gear performing the actual labor (pouring, grinding, cleaning).
-           - AUDIO: NO music. Only immersive ASMR sounds relevant to the scene.
-           - Mandatory Suffix: "Smooth timelapse transformation, fast motion with fixed camera framing, no skipped construction steps. No cuts. No transitions. No subtitles. No captions."
+           - CONTENT: Describe workers in PPE gear performing ${laborActions}.
+           - AUDIO: NO music. Only immersive ASMR sounds relevant to the restoration process (scraping, clicking, mechanical sounds).
+           - Mandatory Suffix: "Smooth timelapse transformation, fast motion with fixed camera framing, no skipped restoration steps. No cuts. No transitions. No subtitles. No captions."
            
         3. SOCIAL MEDIA:
            - Title: Viral and catchy.
-           - Description: Detailed description including relevant viral hashtags (e.g. #timelapse #restoration #architecture).
+           - Description: Detailed description including relevant viral hashtags (e.g. #timelapse #restoration ${isRestoration ? '#asmr #vintage' : '#architecture #interiordesign'}).
            - Tags: 10-15 relevant tags in CSV format (comma separated).
         
         Return ONLY a JSON object:
@@ -305,7 +310,8 @@ export default function App() {
                     onClick={() => { setSelectedNiche(n); setSelectedOption(n.options[0]); setStage('configure'); window.scrollTo(0, 0); }}
                     className={cn(
                       "niche-card group min-h-[300px] md:min-h-[400px]",
-                      n.id === 'InteriorRenovation' ? "border-[#5A125A]/20" : "border-[#9E2A00]/20"
+                      n.id === 'InteriorRenovation' ? "border-[#5A125A]/20" : 
+                      n.id === 'BackyardRenovation' ? "border-[#9E2A00]/20" : "border-[#008080]/20"
                     )}
                   >
                     <div className="absolute top-6 right-6 md:top-8 md:right-8 w-12 h-12 rounded-full border border-white/10 flex items-center justify-center opacity-100 group-hover:bg-white group-hover:text-black transition-all">
@@ -314,7 +320,8 @@ export default function App() {
                     <div className="space-y-4">
                       <div className={cn(
                         "text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full w-fit",
-                        n.id === 'InteriorRenovation' ? "bg-[#5A125A]/20 text-[#5A125A]" : "bg-[#9E2A00]/20 text-[#9E2A00]"
+                        n.id === 'InteriorRenovation' ? "bg-[#5A125A]/20 text-[#5A125A]" : 
+                        n.id === 'BackyardRenovation' ? "bg-[#9E2A00]/20 text-[#9E2A00]" : "bg-[#008080]/20 text-[#008080]"
                       )}>
                         {n.id}
                       </div>
@@ -386,7 +393,11 @@ export default function App() {
               <div className="lg:pt-20">
                 <div className="liquid-glass p-8 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] space-y-8 lg:sticky lg:top-32">
                   <motion.div layoutId={selectedNiche.id} className="space-y-4">
-                    <div className={cn("text-[10px] font-bold uppercase tracking-widest", selectedNiche.id === 'InteriorRenovation' ? "text-[#5A125A]" : "text-[#9E2A00]")}>{selectedNiche.id}</div>
+                    <div className={cn(
+                      "text-[10px] font-bold uppercase tracking-widest", 
+                      selectedNiche.id === 'InteriorRenovation' ? "text-[#5A125A]" : 
+                      selectedNiche.id === 'BackyardRenovation' ? "text-[#9E2A00]" : "text-[#008080]"
+                    )}>{selectedNiche.id}</div>
                     <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter leading-none">{selectedNiche.name}</h2>
                     <p className="text-xs md:text-sm text-white/40 leading-relaxed">{selectedNiche.description}</p>
                   </motion.div>

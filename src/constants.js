@@ -39,6 +39,23 @@ export const NICHES = [
       'Hidden Underground Speakeasy', 
       'Mini Amusement Park'
     ]
+  },
+  {
+    id: 'RestorationProcess',
+    name: 'Restoration Process',
+    description: 'Breathtaking restoration of vintage vehicles, rare items, and mechanical wonders.',
+    options: [
+      'Vintage Supercar',
+      'Classic Muscle Car',
+      'Old Rusty Motorcycle',
+      'Antique Grand Clock',
+      'Dusted Luxury Piano',
+      'Forgotten Medieval Sword',
+      'Rusty Steam Engine',
+      'Abandoned Arcade Machine',
+      'Vintage Camera Gear',
+      'Old Mechanical Watch'
+    ]
   }
 ];
 
