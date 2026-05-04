@@ -108,9 +108,11 @@ export default function App() {
   }, []);
 
   const saveToHistory = (newItem) => {
-    const updated = [newItem, ...history];
-    setHistory(updated);
-    localStorage.setItem('timelapse_dojo_history', JSON.stringify(updated));
+    setHistory(prev => {
+      const updated = [newItem, ...prev];
+      localStorage.setItem('timelapse_dojo_history', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const generateAiSuggestions = async () => {
@@ -463,6 +465,75 @@ export default function App() {
                   </div>
                 </div>
               </div>
+            </motion.div>
+          )}
+          
+          {/* STAGE: HISTORY */}
+          {stage === 'history' && (
+            <motion.div key="history" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-12">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <SectionHeader icon={Clock} title="Evolution History" subtitle="View and re-load your previous syntheses" />
+                {history.length > 0 && (
+                  <button 
+                    onClick={() => { if(confirm('Clear all history?')) { setHistory([]); localStorage.removeItem('timelapse_dojo_history'); } }}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 text-[10px] font-bold uppercase tracking-widest hover:bg-red-500/20 transition-all"
+                  >
+                    <Trash weight="bold" className="w-3.5 h-3.5" /> Clear History
+                  </button>
+                )}
+              </div>
+
+              {history.length === 0 ? (
+                <div className="liquid-glass p-20 rounded-[3rem] flex flex-col items-center justify-center text-center space-y-6">
+                  <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center text-white/20">
+                    <Clock weight="thin" className="w-10 h-10" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-bold">No History Yet</h3>
+                    <p className="text-white/40 max-w-xs mx-auto">Your generated evolution roadmaps will appear here for easy access later.</p>
+                  </div>
+                  <button onClick={() => setStage('browse')} className="btn-primary bg-white text-black border-none px-8">Start Exploring</button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {history.map((item) => (
+                    <motion.div 
+                      key={item.id} 
+                      layoutId={item.id}
+                      className="liquid-glass p-8 rounded-[2.5rem] border-white/5 hover:border-white/10 transition-all group flex flex-col justify-between min-h-[300px]"
+                    >
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest">{item.date}</div>
+                          <button 
+                            onClick={(e) => { 
+                              e.stopPropagation(); 
+                              const updated = history.filter(h => h.id !== item.id);
+                              setHistory(updated);
+                              localStorage.setItem('timelapse_dojo_history', JSON.stringify(updated));
+                            }}
+                            className="p-2 rounded-lg hover:bg-red-500/10 text-white/20 hover:text-red-500 transition-all"
+                          >
+                            <Trash weight="bold" className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-[10px] font-bold text-[#F56600] uppercase tracking-widest">{item.niche}</div>
+                          <h3 className="text-2xl font-bold leading-tight group-hover:text-white transition-colors">{item.title}</h3>
+                          <p className="text-xs text-white/40 line-clamp-2">{item.subject}</p>
+                        </div>
+                      </div>
+
+                      <button 
+                        onClick={() => { setRoadmap(item); setStage('result'); window.scrollTo(0, 0); }}
+                        className="mt-8 flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-white/5 border border-white/5 group-hover:bg-white group-hover:text-black transition-all font-bold text-xs uppercase tracking-widest"
+                      >
+                        Reload Roadmap <CaretRight weight="bold" />
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
